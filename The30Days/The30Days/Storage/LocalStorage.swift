@@ -7,39 +7,41 @@
 
 import Foundation
 
-final class LocalStore: UserDefaults {
-    static let defaultAchievement = 1
+final class LocalStore {
+    private let defaults = UserDefaults()
+    private let defaultChallengeDays: Int = 30
+    private let epochDayInterval: Int = 86_400
+
     enum LocalKeys {
         static let startDate = "startDate"
-        static let achievementID = "achievementID"
-    }
-
-    func saveLastAchievement(_ id: Int) {
-        setValue(id, forKey: LocalKeys.achievementID)
-    }
-
-    func getLastAchievementID() -> Int {
-        value(forKey: LocalKeys.achievementID) as? Int ?? LocalStore.defaultAchievement
-    }
-
-    func getStartDate() -> Date {
-        value(forKey: LocalKeys.startDate) as? Date ?? Date()
     }
 
     func saveStartDate(_ date: Date) {
-        setValue(date, forKey: LocalKeys.startDate)
+        defaults.setValue(date, forKey: LocalKeys.startDate)
+    }
+
+    func getStartDate() -> Date {
+        defaults.value(forKey: LocalKeys.startDate) as? Date ?? Date()
+    }
+
+
+    private func getLongInterval() -> TimeInterval {
+        let maxChallengeInterval = TimeInterval(defaultChallengeDays * epochDayInterval)
+        let endDate = getStartDate().addingTimeInterval(maxChallengeInterval)
+
+        return endDate.timeIntervalSinceNow - Date().timeIntervalSinceNow
+    }
+
+    func getRemainingInterval() -> Int {
+        Int(getLongInterval())
+    }
+
+    func getCompletedDayID() -> Int {
+        let difference = Double(getRemainingInterval()) / Double(epochDayInterval)
+        return defaultChallengeDays - Int(ceil(difference))
     }
 
     func clearStorage() {
-        removeObject(forKey: LocalKeys.startDate)
-        removeObject(forKey: LocalKeys.achievementID)
-    }
-
-    func getRemainingInterval(_ id: Int) -> TimeInterval {
-        let startDate = getStartDate()
-        let spendDate = startDate.addingTimeInterval(TimeInterval(id * 86_400))
-        let endDate = startDate.addingTimeInterval(30 * 86_400)
-
-        return endDate.timeIntervalSinceNow - spendDate.timeIntervalSinceNow
+        defaults.removeObject(forKey: LocalKeys.startDate)
     }
 }

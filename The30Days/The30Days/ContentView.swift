@@ -19,13 +19,12 @@ struct ContentView: View {
                         .font(.system(.largeTitle, design: .monospaced))
                         .fontWeight(.black)
 
-
                     Group {
-                        if store.lastAchievementID == ContentView.finalID {
+                        if store.completedDayID == ContentView.finalID {
                             Text("Congratulations!!!, You have done it!")
                         } else {
-                            let remaining = ContentView.finalID-store.lastAchievementID
-                            Text("Just \(remaining) more day \(remaining>1 ? "s" : "") to go 💪🏼!")
+                            let remaining = ContentView.finalID-store.completedDayID
+                            Text("Just \(remaining) more day\(remaining>1 ? "s" : "") to go 💪🏼!")
                         }
                     }
                     .font(.system(.title, design: .rounded).bold())
@@ -36,13 +35,10 @@ struct ContentView: View {
                     ForEach(store.getMatrix(), id:\.self) { matrixRow in
                         HStack {
                             ForEach(matrixRow, id:\.self) { item in
-                                Image(systemName: item <= store.lastAchievementID ? "checkmark.circle.fill" : "checkmark.circle")
+                                Image(systemName: item <= store.completedDayID ? "checkmark.circle.fill" : "checkmark.circle")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(item <= store.lastAchievementID ? .green : .primary)
-                                    .onTapGesture {
-                                        store.setAchievement(item)
-                                    }
+                                    .foregroundColor(item <= store.completedDayID ? .green : .primary)
                             }
                         }
                     }
@@ -73,9 +69,6 @@ struct ContentView: View {
                     .padding()
                 }
             }
-            .onReceive(store.countDownTimer) { _ in
-                store.startCountDown()
-            }
 
             if showDatePicker {
                 DatePicker("Change Start Date",
@@ -96,7 +89,6 @@ struct ContentView: View {
                     .onChange(of: store.selectedStartDate, perform: store.handleStartDateChange)
             }
         }
-//        .preferredColorScheme(.dark)
     }
 }
 
