@@ -15,10 +15,6 @@ struct ContentView: View {
         ZStack {
             VStack {
                 VStack(spacing: 10) {
-                    Text("The30DaysApp")
-                        .font(.system(.largeTitle, design: .monospaced))
-                        .fontWeight(.black)
-
                     Group {
                         if store.completedDayID == ContentView.finalID {
                             Text("Congratulations!!!, You have done it!")
@@ -29,7 +25,7 @@ struct ContentView: View {
                     }
                     .font(.system(.title, design: .rounded).bold())
                 }
-                .padding(.bottom, 10)
+                .padding(.vertical)
 
                 VStack {
                     ForEach(store.getMatrix(), id:\.self) { matrixRow in
@@ -57,16 +53,22 @@ struct ContentView: View {
             }
             .safeAreaInset(edge: .top) {
                 HStack {
-                    Spacer()
-                    Button {
-                        showDatePicker.toggle()
-                    } label: {
-                        Label("Edit Start Date", systemImage: "calendar")
-                            .imageScale(.large)
-                            .labelStyle(.iconOnly)
+                    ZStack(alignment: .trailing) {
+                        Text("The30DaysApp")
+                            .font(.system(.largeTitle, design: .monospaced))
+                            .fontWeight(.black)
+                            .frame(maxWidth: .infinity)
 
+                        Button {
+                            showDatePicker.toggle()
+                        } label: {
+                            Label("Edit Start Date", systemImage: "calendar")
+                                .imageScale(.large)
+                                .labelStyle(.iconOnly)
+
+                        }
+                        .padding()
                     }
-                    .padding()
                 }
             }
 
@@ -89,6 +91,7 @@ struct ContentView: View {
                     .onChange(of: store.selectedStartDate, perform: store.handleStartDateChange)
             }
         }
+        .preferredColorScheme(.dark)
     }
 }
 
