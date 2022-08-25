@@ -45,11 +45,10 @@ final class AppStore: ObservableObject {
 
     func clearStorage(){
         localStore.clearStorage()
-//        self.lastAchievementID = LocalStore.defaultAchievement
     }
 
     func startCountDown() {
-        guard counter != 0 else { return }
+        guard counter != 0 else { fatalError() }
         counter -= 1
     }
 
